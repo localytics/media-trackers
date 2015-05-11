@@ -13,14 +13,14 @@
 
 @interface LLMediaTracker: NSObject
 
-- (instancetype)initWithContentLength:(double)videoLength;
-- (instancetype)initWithContentLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
+- (instancetype)initWithContentLength:(double)contentLength;
+- (instancetype)initWithContentLength:(double)contentLength eventAttributes:(NSDictionary *)attributes;
 
 - (void)tagEvent;
 
-- (void)playAtTime:(NSTimeInterval)currentTime;
-- (void)stopAtTime:(NSTimeInterval)currentTime;
-- (void)completeAtTime:(NSTimeInterval)currentTime;
+- (void)playAtTime:(NSTimeInterval)time;
+- (void)stopAtTime:(NSTimeInterval)time;
+- (void)completeAtTime:(NSTimeInterval)time;
 
 
 @end

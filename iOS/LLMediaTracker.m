@@ -10,8 +10,7 @@
 //
 
 #import "LLMediaTracker.h"
-//#import "Localytics+Internal.h"
-#import "Localytics.h"
+#import "Localytics+Internal.h"
 
 @interface LLMediaTracker ()
 
@@ -27,21 +26,21 @@
 
 @implementation LLMediaTracker
 
-- (instancetype)initWithContentLength:(double)videoLength
+- (instancetype)initWithContentLength:(double)contentLength
 {
     self = [super init];
     if (self)
     {
-        _videoDuration = videoLength;
+        _videoDuration = contentLength;
         _orientation = [UIApplication sharedApplication].statusBarOrientation;
         [self registerObservers];
     }
     return self;
 }
 
-- (instancetype)initWithContentLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
+- (instancetype)initWithContentLength:(double)contentLength eventAttributes:(NSDictionary *)attributes
 {
-    if (self = [self initWithContentLength:videoLength])
+    if (self = [self initWithContentLength:contentLength])
     {
         _userDefinedAttributes = attributes;
     }
@@ -84,7 +83,7 @@
     videoAttributes[@"Duration Consumed"] =             [LLMediaTracker stringForDouble:self.timeWatched];
     
     [Localytics tagEvent:@"Media Consumed" attributes:videoAttributes];
-//    LocalyticsLog(@"%@", videoAttributes);
+    LocalyticsLog(@"%@", videoAttributes);
 }
 
 + (NSString *)stringForOrientation:(UIInterfaceOrientation)orientation
@@ -118,18 +117,18 @@
     return [NSString stringWithFormat:@"%d seconds", seconds];
 }
 
-- (void)playAtTime:(NSTimeInterval)currentTime
+- (void)playAtTime:(NSTimeInterval)time
 {
-    self.currentTime = currentTime;
+    self.currentTime = time;
 }
 
-- (void)stopAtTime:(NSTimeInterval)currentTime
+- (void)stopAtTime:(NSTimeInterval)time
 {
-    self.currentTime = currentTime;
+    self.currentTime = time;
 }
 
-- (void)completeAtTime:(NSTimeInterval)currentTime {
-    self.currentTime = currentTime;
+- (void)completeAtTime:(NSTimeInterval)time {
+    self.currentTime = time;
     self.didComplete = YES;
 }
 
