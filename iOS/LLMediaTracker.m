@@ -10,24 +10,17 @@
 //
 
 #import "LLMediaTracker.h"
-#import "Localytics+Internal.h"
+//#import "Localytics+Internal.h"
+#import "Localytics.h"
 
 @interface LLMediaTracker ()
 
 @property (nonatomic, strong) NSDictionary *userDefinedAttributes;
-@property (nonatomic, strong) NSDate *loadTime;
 @property (nonatomic, assign) UIInterfaceOrientation orientation;
-@property (nonatomic, assign) BOOL didChangeOrientation;
-@property (nonatomic, assign) int stopCount;
-@property (nonatomic, assign) int playCount;
-@property (nonatomic, assign) int seekForwardCount;
-@property (nonatomic, assign) int seekBackwardsCount;
-@property (nonatomic, assign) double videoDuration;
-@property (nonatomic, assign) double timeWatched;
-@property (nonatomic, assign) double currentTime;
+@property (nonatomic, assign) NSTimeInterval videoDuration;
+@property (nonatomic, assign) NSTimeInterval timeWatched;
+@property (nonatomic, assign) NSTimeInterval currentTime;
 @property (nonatomic, assign) BOOL didComplete;
-
-@property (nonatomic, assign) BOOL isSeeking;
 
 @end
 
@@ -41,7 +34,6 @@
     {
         _videoDuration = videoLength;
         _orientation = [UIApplication sharedApplication].statusBarOrientation;
-        _loadTime = [NSDate date];
         [self registerObservers];
     }
     return self;
@@ -78,7 +70,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)processTaggingData
+- (void)tagEvent
 {
     long percentWatched = lround(self.timeWatched / self.videoDuration * 100);
     NSMutableDictionary *videoAttributes = [NSMutableDictionary dictionaryWithDictionary:self.userDefinedAttributes];
@@ -92,7 +84,7 @@
     videoAttributes[@"Duration Consumed"] =             [LLMediaTracker stringForDouble:self.timeWatched];
     
     [Localytics tagEvent:@"Media Consumed" attributes:videoAttributes];
-    LocalyticsLog(@"%@", videoAttributes);
+//    LocalyticsLog(@"%@", videoAttributes);
 }
 
 + (NSString *)stringForOrientation:(UIInterfaceOrientation)orientation
@@ -126,33 +118,17 @@
     return [NSString stringWithFormat:@"%d seconds", seconds];
 }
 
-- (void)playAtTime:(double)currentTime
+- (void)playAtTime:(NSTimeInterval)currentTime
 {
-    self.playCount += 1;
     self.currentTime = currentTime;
 }
 
-- (void)stopAtTime:(double)currentTime
+- (void)stopAtTime:(NSTimeInterval)currentTime
 {
-    self.stopCount += 1;
     self.currentTime = currentTime;
 }
 
-- (void)seekToTime:(double)newTime
-{
-    if (newTime > self.currentTime)
-    {
-        self.seekForwardCount += 1;
-    }
-    else if (newTime < self.currentTime)
-    {
-        self.seekBackwardsCount += 1;
-    }
-    
-    self.currentTime = newTime;
-}
-
-- (void)completeAtTime:(double)currentTime {
+- (void)completeAtTime:(NSTimeInterval)currentTime {
     self.currentTime = currentTime;
     self.didComplete = YES;
 }
@@ -162,7 +138,6 @@
 - (void)orientationChanged:(NSNotification *)notification
 {
     self.orientation = [notification.userInfo[UIApplicationStatusBarOrientationUserInfoKey] integerValue];
-    self.didChangeOrientation = YES;
 }
 
 - (void)dealloc

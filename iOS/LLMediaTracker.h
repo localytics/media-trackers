@@ -16,12 +16,11 @@
 - (instancetype)initWithContentLength:(double)videoLength;
 - (instancetype)initWithContentLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
 
-- (void)processTaggingData;
+- (void)tagEvent;
 
-- (void)playAtTime:(double)currentTime;
-- (void)stopAtTime:(double)currentTime;
-- (void)seekToTime:(double)newTime;
-- (void)completeAtTime:(double)currentTime;
+- (void)playAtTime:(NSTimeInterval)currentTime;
+- (void)stopAtTime:(NSTimeInterval)currentTime;
+- (void)completeAtTime:(NSTimeInterval)currentTime;
 
 
 @end
