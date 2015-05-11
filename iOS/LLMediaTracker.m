@@ -10,7 +10,7 @@
 //
 
 #import "LLMediaTracker.h"
-#import "Localytics+Internal.h"
+#import "Localytics.h"
 
 @interface LLMediaTracker ()
 
@@ -26,28 +26,29 @@
 
 @implementation LLMediaTracker
 
-- (instancetype)initWithContentLength:(double)contentLength
+- (instancetype)initWithMediaLength:(double)mediaLength
 {
     self = [super init];
     if (self)
     {
-        _videoDuration = contentLength;
+        _videoDuration = mediaLength;
         _orientation = [UIApplication sharedApplication].statusBarOrientation;
         [self registerObservers];
     }
     return self;
 }
 
-- (instancetype)initWithContentLength:(double)contentLength eventAttributes:(NSDictionary *)attributes
+- (instancetype)initWithMediaLength:(double)mediaLength eventAttributes:(NSDictionary *)attributes
 {
-    if (self = [self initWithContentLength:contentLength])
+    if (self = [self initWithMediaLength:mediaLength])
     {
         _userDefinedAttributes = attributes;
     }
     return self;
 }
 
-- (void)setCurrentTime:(double)currentTime {
+- (void)setCurrentTime:(double)currentTime
+{
     _currentTime = currentTime;
     
     if (_currentTime > _timeWatched)
@@ -56,7 +57,7 @@
     }
 }
 
--(void)registerObservers
+- (void)registerObservers
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(orientationChanged:)
@@ -64,7 +65,7 @@
                                                object:nil];
 }
 
--(void)unregisterObservers
+- (void)unregisterObservers
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -74,16 +75,15 @@
     long percentWatched = lround(self.timeWatched / self.videoDuration * 100);
     NSMutableDictionary *videoAttributes = [NSMutableDictionary dictionaryWithDictionary:self.userDefinedAttributes];
     
-    videoAttributes[@"Final Orientation"] =					[LLMediaTracker stringForOrientation:self.orientation];
+    videoAttributes[@"End Orientation"] =					[LLMediaTracker stringForOrientation:self.orientation];
     
     videoAttributes[@"Did Complete"] =                  [LLMediaTracker stringForBool:self.didComplete];
 
-    videoAttributes[@"Percent completed"] =               [LLMediaTracker stringForInt:(int)percentWatched];
-    videoAttributes[@"Media Length"] =                  [LLMediaTracker stringForDouble:self.videoDuration];
-    videoAttributes[@"Duration Consumed"] =             [LLMediaTracker stringForDouble:self.timeWatched];
+    videoAttributes[@"Percent Played"] =               [LLMediaTracker stringForInt:(int)percentWatched];
+    videoAttributes[@"Media Length (Seconds)"] =                  [LLMediaTracker stringForDouble:self.videoDuration];
+    videoAttributes[@"Time Played (Seconds)"] =             [LLMediaTracker stringForDouble:self.timeWatched];
     
-    [Localytics tagEvent:@"Media Consumed" attributes:videoAttributes];
-    LocalyticsLog(@"%@", videoAttributes);
+    [Localytics tagEvent:@"Media Played" attributes:videoAttributes];
 }
 
 + (NSString *)stringForOrientation:(UIInterfaceOrientation)orientation

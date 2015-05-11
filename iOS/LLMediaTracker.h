@@ -13,8 +13,8 @@
 
 @interface LLMediaTracker: NSObject
 
-- (instancetype)initWithContentLength:(double)contentLength;
-- (instancetype)initWithContentLength:(double)contentLength eventAttributes:(NSDictionary *)attributes;
+- (instancetype)initWithMediaLength:(double)mediaLength;
+- (instancetype)initWithMediaLength:(double)mediaLength eventAttributes:(NSDictionary *)attributes;
 
 - (void)tagEvent;
 
