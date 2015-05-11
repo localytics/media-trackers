@@ -34,7 +34,7 @@
 
 @implementation LLMediaTracker
 
-- (instancetype)initWithVideoLength:(double)videoLength
+- (instancetype)initWithContentLength:(double)videoLength
 {
     self = [super init];
     if (self)
@@ -47,9 +47,9 @@
     return self;
 }
 
-- (instancetype)initWithVideoLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
+- (instancetype)initWithContentLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
 {
-    if (self = [self initWithVideoLength:videoLength])
+    if (self = [self initWithContentLength:videoLength])
     {
         _userDefinedAttributes = attributes;
     }
@@ -83,22 +83,15 @@
     long percentWatched = lround(self.timeWatched / self.videoDuration * 100);
     NSMutableDictionary *videoAttributes = [NSMutableDictionary dictionaryWithDictionary:self.userDefinedAttributes];
     
-    videoAttributes[@"Orientation"] =					[LLMediaTracker stringForOrientation:self.orientation];
+    videoAttributes[@"Final Orientation"] =					[LLMediaTracker stringForOrientation:self.orientation];
     
-    videoAttributes[@"Did Orientation Change"] =		[LLMediaTracker stringForBool:self.didChangeOrientation];
-    videoAttributes[@"Did Scrub"] =						[LLMediaTracker stringForBool:(self.seekBackwardsCount > 0 || self.seekForwardCount > 0)];
-    videoAttributes[@"Did Start Playback"] =			[LLMediaTracker stringForBool:self.playCount > 0];
-    videoAttributes[@"Did Complete Video"] =			[LLMediaTracker stringForBool:self.didComplete];
+    videoAttributes[@"Did Complete"] =                  [LLMediaTracker stringForBool:self.didComplete];
 
-    videoAttributes[@"Stop Count"] =                    [LLMediaTracker stringForInt:self.stopCount];
-    videoAttributes[@"Seek Forward Count"] =            [LLMediaTracker stringForInt:self.seekForwardCount];
-    videoAttributes[@"Seek Backwards Count"] =          [LLMediaTracker stringForInt:self.seekBackwardsCount];
-    videoAttributes[@"Scrub Count"] =                   [LLMediaTracker stringForInt:(self.seekForwardCount + self.seekBackwardsCount)];
-    videoAttributes[@"Raw Percent Watched"] =			[LLMediaTracker stringForInt:(int)percentWatched];
-    videoAttributes[@"Video Duration"] =                [LLMediaTracker stringForDouble:self.videoDuration];
-    videoAttributes[@"Duration Watched"] =              [LLMediaTracker stringForDouble:self.timeWatched];
+    videoAttributes[@"Percent completed"] =               [LLMediaTracker stringForInt:(int)percentWatched];
+    videoAttributes[@"Media Length"] =                  [LLMediaTracker stringForDouble:self.videoDuration];
+    videoAttributes[@"Duration Consumed"] =             [LLMediaTracker stringForDouble:self.timeWatched];
     
-    [Localytics tagEvent:@"Video Watched" attributes:videoAttributes];
+    [Localytics tagEvent:@"Media Consumed" attributes:videoAttributes];
     LocalyticsLog(@"%@", videoAttributes);
 }
 

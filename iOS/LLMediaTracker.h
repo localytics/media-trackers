@@ -13,8 +13,8 @@
 
 @interface LLMediaTracker: NSObject
 
-- (instancetype)initWithVideoLength:(double)videoLength;
-- (instancetype)initWithVideoLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
+- (instancetype)initWithContentLength:(double)videoLength;
+- (instancetype)initWithContentLength:(double)videoLength eventAttributes:(NSDictionary *)attributes;
 
 - (void)processTaggingData;
 
