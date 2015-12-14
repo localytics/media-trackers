@@ -1,7 +1,5 @@
 package com.localytics.library;
 
-import com.localytics.android.Localytics;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,20 +13,22 @@ public class MediaTrackerImpl implements MediaTracker {
     private Map<String, String> userDefinedAttributes = new HashMap<>();
     private double videoDurationMS;
     private double startedTime;
+    private EventTagger tagger;
     private List<Range> rangesWatched = new ArrayList<>();
 
     private boolean didComplete = false;
 
-    public static MediaTracker create(double mediaLength) {
-        return new MediaTrackerImpl(mediaLength, new HashMap<String, String>());
+    public static MediaTracker create(double mediaLength, EventTagger tagger) {
+        return new MediaTrackerImpl(mediaLength, tagger, new HashMap<String, String>());
     }
 
-    public static MediaTracker create(double mediaLength, Map<String, String> attributes) {
-        return new MediaTrackerImpl(mediaLength, attributes);
+    public static MediaTracker create(double mediaLength, EventTagger tagger, Map<String, String> attributes) {
+        return new MediaTrackerImpl(mediaLength, tagger, attributes);
     }
 
-    private MediaTrackerImpl(double mediaLengthMS, Map<String, String> attributes) {
+    private MediaTrackerImpl(double mediaLengthMS, EventTagger tagger, Map<String, String> attributes) {
         this.videoDurationMS = mediaLengthMS;
+        this.tagger = tagger;
         if (attributes == null) {
             attributes = new HashMap<>();
         }
@@ -77,7 +77,7 @@ public class MediaTrackerImpl implements MediaTracker {
         videoAttributes.put("Media Length (seconds)", inSeconds(videoDurationMS));
         videoAttributes.put("Time Played (seconds)", inSeconds(timeWatchedMS));
 
-        Localytics.tagEvent("Media Played", videoAttributes);
+        tagger.tagEvent("Media Played", videoAttributes);
     }
 
 
