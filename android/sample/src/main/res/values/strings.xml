@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MediaTracker</string>
+    <string name="floating_button_text">Tag Event</string>
+</resources>
