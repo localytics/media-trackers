@@ -11,22 +11,22 @@ import java.util.Map;
 public class MediaTracker {
 
     private Map<String, String> userDefinedAttributes = new HashMap<>();
-    private double videoDurationMS;
-    private double startedTime;
+    private int videoDurationMS;
+    private int startedTime;
     private EventTagger tagger;
     private List<Range> rangesWatched = new ArrayList<>();
 
     private boolean didComplete = false;
 
-    public static MediaTracker create(double videoDurationMS, EventTagger tagger) {
+    public static MediaTracker create(int videoDurationMS, EventTagger tagger) {
         return create(videoDurationMS, tagger, new HashMap<String, String>());
     }
 
-    public static MediaTracker create(double videoDurationMS, EventTagger tagger, Map<String, String> userDefinedAttributes) {
+    public static MediaTracker create(int videoDurationMS, EventTagger tagger, Map<String, String> userDefinedAttributes) {
         return new MediaTracker(videoDurationMS, tagger, userDefinedAttributes);
     }
 
-    private MediaTracker(double videoDurationMS, EventTagger tagger, Map<String, String> userDefinedAttributes) {
+    private MediaTracker(int videoDurationMS, EventTagger tagger, Map<String, String> userDefinedAttributes) {
         this.videoDurationMS = videoDurationMS;
         this.tagger = tagger;
         if (tagger == null) {
@@ -38,16 +38,16 @@ public class MediaTracker {
         this.userDefinedAttributes = userDefinedAttributes;
     }
 
-    public void tagEventAtTime(double timeInMS) {
+    public void tagEventAtTime(int timeInMS) {
         mergeOrCreateRange(startedTime, timeInMS);
         tagEvent();
     }
 
-    public void playAtTime(double timeInMS) {
+    public void playAtTime(int timeInMS) {
         startedTime = timeInMS;
     }
 
-    public void stopAtTime(double timeInMS) {
+    public void stopAtTime(int timeInMS) {
         mergeOrCreateRange(startedTime, timeInMS);
     }
 
@@ -57,7 +57,7 @@ public class MediaTracker {
     }
 
 
-    private void mergeOrCreateRange(double watchStart, double watchEnd) {
+    private void mergeOrCreateRange(int watchStart, int watchEnd) {
         boolean overlap = false;
         int i = 0;
         while (!overlap && i < rangesWatched.size()) {
@@ -69,10 +69,10 @@ public class MediaTracker {
     }
 
     private void tagEvent() {
-        double timeWatchedMS = sumRanges();
-        Map<String, String> videoAttributes = initMapWithUserAttributes();
+        int timeWatchedMS = sumRanges();
+        Map<String, String> videoAttributes = new HashMap<>(userDefinedAttributes);
         videoAttributes.put("Did Complete", didComplete ? "true" : "false");
-        videoAttributes.put("Percent Played", String.valueOf((int) Math.round((timeWatchedMS / videoDurationMS) * 100)));
+        videoAttributes.put("Percent Played", String.valueOf(Math.round((timeWatchedMS / videoDurationMS) * 100)));
         videoAttributes.put("Media Length (seconds)", inSeconds(videoDurationMS));
         videoAttributes.put("Time Played (seconds)", inSeconds(timeWatchedMS));
 
@@ -80,7 +80,7 @@ public class MediaTracker {
     }
 
 
-    private double sumRanges() {
+    private int sumRanges() {
         int sum = 0;
         for (Range r : rangesWatched) {
             sum += r.getDuration();
@@ -88,33 +88,25 @@ public class MediaTracker {
         return sum;
     }
 
-    private Map<String, String> initMapWithUserAttributes() {
-        Map<String, String> attrs = new HashMap<>();
-        for (Map.Entry<String, String> e : userDefinedAttributes.entrySet()) {
-            attrs.put(e.getKey(), e.getValue());
-        }
-        return attrs;
-    }
-
-    private String inSeconds(double lengthInMS) {
-        return String.valueOf(Math.round(lengthInMS * 0.001));
+    private String inSeconds(int lengthInMS) {
+        return String.valueOf(Math.round(lengthInMS / 1000));
     }
 
     private class Range {
 
-        private double start;
-        private double end;
+        private int start;
+        private int end;
 
-        public Range(double s, double e) {
+        public Range(int s, int e) {
             start = s;
             end = e;
         }
 
-        public double getDuration() {
+        public int getDuration() {
             return end - start;
         }
 
-        boolean mergeIfOverlapping(double s, double e) {
+        boolean mergeIfOverlapping(int s, int e) {
             if (start <= s && s <= end && end < e) { //watched from somewhere in the middle to after the end
                 end = e;
                 return true;

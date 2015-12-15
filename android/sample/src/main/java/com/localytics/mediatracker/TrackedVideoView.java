@@ -13,21 +13,24 @@ import com.localytics.library.MediaTracker;
 public class TrackedVideoView extends VideoView {
 
     private MediaTracker mediaTracker;
-    private double startTime = 0;
+    private int startTime = 0;
 
     public TrackedVideoView(Context context) {
-        super(context);
-        setup();
+        this(context, null);
     }
 
     public TrackedVideoView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setup();
+        this(context, attrs, 0);
     }
 
     public TrackedVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setup();
+        super.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mediaTracker.complete();
+            }
+        });
     }
 
     public void setMediaTracker(MediaTracker mt) {
@@ -39,7 +42,7 @@ public class TrackedVideoView extends VideoView {
         super.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                completionHook();
+                mediaTracker.complete();
                 l.onCompletion(mp);
             }
         });
@@ -68,19 +71,6 @@ public class TrackedVideoView extends VideoView {
     public void seekTo(int timeInMS) {
         super.seekTo(timeInMS);
         startTime = timeInMS;
-    }
-
-    private void setup() {
-        super.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                completionHook();
-            }
-        });
-    }
-
-    private void completionHook() {
-        mediaTracker.complete();
     }
 
 }
