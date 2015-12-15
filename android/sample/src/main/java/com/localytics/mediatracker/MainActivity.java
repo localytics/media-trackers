@@ -13,7 +13,6 @@ import android.widget.MediaController;
 import com.localytics.android.Localytics;
 import com.localytics.library.EventTagger;
 import com.localytics.library.MediaTracker;
-import com.localytics.library.MediaTrackerImpl;
 
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public class MainActivity extends FragmentActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mediaTracker = MediaTrackerImpl.create(videoView.getDuration(), new EventTagger() {
+                mediaTracker = MediaTracker.create(videoView.getDuration(), new EventTagger() {
                     @Override
                     public void tagEvent(String eventName, Map<String, String> videoAttributes) {
                         Localytics.tagEvent(eventName, videoAttributes);
