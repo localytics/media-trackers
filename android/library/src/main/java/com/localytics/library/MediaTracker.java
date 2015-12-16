@@ -10,6 +10,11 @@ import java.util.Map;
  */
 public class MediaTracker {
 
+    static final String DID_COMPLETE = "Did Complete";
+    static final String PERCENT_PLAYED = "Percent Played";
+    static final String MEDIA_LENGTH_SECONDS = "Media Length (seconds)";
+    static final String TIME_PLAYED_SECONDS = "Time Played (seconds)";
+
     private Map<String, String> userDefinedAttributes = new HashMap<>();
     private int videoDurationMS;
     private int startedTime;
@@ -71,10 +76,10 @@ public class MediaTracker {
     private void tagEvent() {
         int timeWatchedMS = sumRanges();
         Map<String, String> videoAttributes = new HashMap<>(userDefinedAttributes);
-        videoAttributes.put("Did Complete", didComplete ? "true" : "false");
-        videoAttributes.put("Percent Played", String.valueOf(Math.round((timeWatchedMS / videoDurationMS) * 100)));
-        videoAttributes.put("Media Length (seconds)", inSeconds(videoDurationMS));
-        videoAttributes.put("Time Played (seconds)", inSeconds(timeWatchedMS));
+        videoAttributes.put(DID_COMPLETE, didComplete ? "true" : "false");
+        videoAttributes.put(PERCENT_PLAYED, String.valueOf(Math.round((timeWatchedMS / videoDurationMS) * 100)));
+        videoAttributes.put(MEDIA_LENGTH_SECONDS, inSeconds(videoDurationMS));
+        videoAttributes.put(TIME_PLAYED_SECONDS, inSeconds(timeWatchedMS));
 
         tagger.tagEvent("Media Played", videoAttributes);
     }
@@ -92,35 +97,4 @@ public class MediaTracker {
         return String.valueOf(Math.round(lengthInMS / 1000));
     }
 
-    private class Range {
-
-        private int start;
-        private int end;
-
-        public Range(int s, int e) {
-            start = s;
-            end = e;
-        }
-
-        public int getDuration() {
-            return end - start;
-        }
-
-        boolean mergeIfOverlapping(int s, int e) {
-            if (start <= s && s <= end && end < e) { //watched from somewhere in the middle to after the end
-                end = e;
-                return true;
-            } else if (start > s && start <= e && end >= e) { //watched from somewhere before the range into the middle
-                start = s;
-                return true;
-            } else if (start > s && end < e) { // watched portion is strictly larger on both ends
-                start = s;
-                end = e;
-                return true;
-            } else if (start <= s && end >= e) { //complete overlap
-                return true;
-            }
-            return false;
-        }
-    }
 }
