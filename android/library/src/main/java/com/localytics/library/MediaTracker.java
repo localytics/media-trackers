@@ -17,7 +17,7 @@ public class MediaTracker {
 
     private Map<String, String> userDefinedAttributes = new HashMap<>();
     private int videoDurationMS;
-    private int startedTime;
+    private int startedTime = -1;
     private EventTagger tagger;
     private List<Range> rangesWatched = new ArrayList<>();
 
@@ -44,7 +44,12 @@ public class MediaTracker {
     }
 
     public void tagEventAtTime(int timeInMS) {
-        mergeOrCreateRange(startedTime, timeInMS);
+        if (timeInMS == videoDurationMS) {
+            didComplete = true;
+        }
+        if (startedTime >= 0) {
+            mergeOrCreateRange(startedTime, timeInMS);
+        }
         tagEvent();
     }
 
@@ -63,6 +68,9 @@ public class MediaTracker {
 
 
     private void mergeOrCreateRange(int watchStart, int watchEnd) {
+        if (startedTime < 0) {
+            throw new IllegalStateException("The video can't be tagged as stopped before it is tagged as started.");
+        }
         boolean overlap = false;
         int i = 0;
         while (!overlap && i < rangesWatched.size()) {
@@ -71,13 +79,14 @@ public class MediaTracker {
         if (!overlap) {
             rangesWatched.add(new Range(watchStart, watchEnd));
         }
+        startedTime = -1;
     }
 
     private void tagEvent() {
         int timeWatchedMS = sumRanges();
         Map<String, String> videoAttributes = new HashMap<>(userDefinedAttributes);
         videoAttributes.put(DID_COMPLETE, didComplete ? "true" : "false");
-        videoAttributes.put(PERCENT_PLAYED, String.valueOf(Math.round((timeWatchedMS / videoDurationMS) * 100)));
+        videoAttributes.put(PERCENT_PLAYED, String.valueOf(Math.round(((double) timeWatchedMS / videoDurationMS) * 100)));
         videoAttributes.put(MEDIA_LENGTH_SECONDS, inSeconds(videoDurationMS));
         videoAttributes.put(TIME_PLAYED_SECONDS, inSeconds(timeWatchedMS));
 
