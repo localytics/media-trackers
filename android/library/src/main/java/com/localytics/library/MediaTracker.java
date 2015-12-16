@@ -68,8 +68,11 @@ public class MediaTracker {
 
 
     private void mergeOrCreateRange(int watchStart, int watchEnd) {
-        if (startedTime < 0) {
+        if (watchStart < 0) {
             throw new IllegalStateException("The video can't be tagged as stopped before it is tagged as started.");
+        }
+        if (watchEnd > videoDurationMS || watchStart > videoDurationMS) {
+            throw new IllegalArgumentException("The time input is greater than the duration of the media.");
         }
         boolean overlap = false;
         int i = 0;

@@ -85,22 +85,35 @@ public class MediaTrackerTest {
     }
 
     @Test
-    public void testFailureCondition() throws Exception {
+    public void testStopBeforeStartFailure() throws Exception {
         MediaTracker mediaTracker = MediaTracker.create(1000000, new EventTagger() {
             @Override
-            public void tagEvent(String eventName, Map<String, String> videoAttributes) {
-                assertEquals("true", videoAttributes.get(MediaTracker.DID_COMPLETE));
-                assertEquals("1000", videoAttributes.get(MediaTracker.MEDIA_LENGTH_SECONDS));
-                assertEquals("1000", videoAttributes.get(MediaTracker.TIME_PLAYED_SECONDS));
-                assertEquals("100", videoAttributes.get(MediaTracker.PERCENT_PLAYED));
-            }
+            public void tagEvent(String eventName, Map<String, String> videoAttributes) { }
         });
         boolean exceptionCaught = false;
         try {
+            mediaTracker.stopAtTime(500000);
+        } catch (Exception e) {
+            exceptionCaught = true;
+        }
+        assertTrue(exceptionCaught);
+    }
+
+    @Test
+    public void testStopAfterMediaLengthFailure() throws Exception {
+        MediaTracker mediaTracker = MediaTracker.create(1000000, new EventTagger() {
+            @Override
+            public void tagEvent(String eventName, Map<String, String> videoAttributes) { }
+        });
+        boolean exceptionCaught = false;
+        try {
+            mediaTracker.playAtTime(0);
             mediaTracker.stopAtTime(5000000);
         } catch (Exception e) {
             exceptionCaught = true;
         }
         assertTrue(exceptionCaught);
     }
+
+
 }
