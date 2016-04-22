@@ -31,7 +31,7 @@ EventTagger tagger = new EventTagger () {
 }
 ```
 
-* `TrackedVideoView` A lightweight subclass of Android's `VideoView`.  In order to track video playback include the `TrackedVideoView` in your app and set your own instance of `MediaTracker` by calling `setMediaTracker`. This class requires no additional configuration to track video playback and will be aware of a user playing, pausing, stopping, and completing the video being played.
+* `TrackedVideoView` A lightweight subclass of Android's `VideoView`.  In order to track video playback include the `TrackedVideoView` in your app and set your own instance of `MediaTracker` by calling `setMediaTracker`. This class requires no additional configuration to track video playback and will be aware of a user playing, pausing, stopping, and completing the video.
 
 ##Basic Integration with TrackedVideoView
 In order to intergate with the `TrackedVideoView` include an instance in your layout.
