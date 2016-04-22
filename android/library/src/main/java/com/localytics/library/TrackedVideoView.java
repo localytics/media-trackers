@@ -1,11 +1,9 @@
-package com.localytics.mediatracker;
+package com.localytics.library;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.widget.VideoView;
-
-import com.localytics.library.MediaTracker;
 
 /**
  * Created by mriegelhaupt on 12/14/15.

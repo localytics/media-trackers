@@ -3,8 +3,8 @@ package com.localytics.mediatracker;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +13,7 @@ import android.widget.MediaController;
 import com.localytics.android.Localytics;
 import com.localytics.library.EventTagger;
 import com.localytics.library.MediaTracker;
+import com.localytics.library.TrackedVideoView;
 
 import java.util.Map;
 
