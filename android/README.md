@@ -8,7 +8,7 @@
 ## Library
 
 * `MediaTracker` A class that keeps track of the playback on a certain piece of media.
-  * Parameters:
+  * Constructor parameters:
     * `int videoDurationMS` The length in milliseconds of the media that the `MediaTracker` will track.
     * `EventTagger tagger` An interface used to handle how to tag events.  Described below.
     * (optional) `Map<String, String> userDefinedAttributes` A map of attributes that will be included in the attributes dictionary during event tagging.
