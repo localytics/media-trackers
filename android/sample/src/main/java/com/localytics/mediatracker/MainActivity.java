@@ -93,6 +93,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mediaTracker.tagEventAtTime(videoView.getCurrentPosition());
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("position", videoView.getCurrentPosition());
