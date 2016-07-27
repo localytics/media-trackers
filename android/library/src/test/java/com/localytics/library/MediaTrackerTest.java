@@ -105,7 +105,33 @@ public class MediaTrackerTest {
         mediaTracker.stopAtTime(350000);
 
         mediaTracker.tagEventAtTime(500000);
+    }
 
+    @Test
+    public void testCompleteOverlap() throws Exception {
+        MediaTracker mediaTracker = MediaTracker.create(1000000, new EventTagger() {
+            @Override
+            public void tagEvent(String eventName, Map<String, String> videoAttributes) {
+                assertEquals("1000", videoAttributes.get(MediaTracker.MEDIA_LENGTH_SECONDS));
+                assertEquals("800", videoAttributes.get(MediaTracker.TIME_PLAYED_SECONDS));
+                assertEquals("80", videoAttributes.get(MediaTracker.PERCENT_PLAYED));
+            }
+        });
+
+        //range 1
+        mediaTracker.playAtTime(50000);
+        mediaTracker.stopAtTime(150000);
+        //range 2
+        mediaTracker.playAtTime(300000);
+        mediaTracker.stopAtTime(500000);
+        //overlaps both ranges
+        mediaTracker.playAtTime(600000);
+        mediaTracker.stopAtTime(750000);
+
+        mediaTracker.playAtTime(0);
+        mediaTracker.stopAtTime(800000);
+
+        mediaTracker.tagEventAtTime(500000);
     }
 
 

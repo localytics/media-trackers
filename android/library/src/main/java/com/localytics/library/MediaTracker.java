@@ -98,15 +98,16 @@ public class MediaTracker {
 
     private void ensureNewRangehasNoOverlap(Range input)
     {
+        List<Range> toRemove = new ArrayList<>();
         for (int i = 0; i < rangesWatched.size(); i++) {
             Range range = rangesWatched.get(i);
             if (range != input) { //avoid merging myself
                 if (input.mergeIfOverlapping(range.getStart(), range.getEnd())) {
-                    rangesWatched.remove(i);
-                    return;
+                    toRemove.add(range);
                 }
             }
         }
+        rangesWatched.removeAll(toRemove);
     }
 
     private void tagEvent() {
