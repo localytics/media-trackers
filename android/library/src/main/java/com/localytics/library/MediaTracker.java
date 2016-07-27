@@ -87,7 +87,7 @@ public class MediaTracker {
             Range range = rangesWatched.get(i++);
             overlap = range.mergeIfOverlapping(watchStart, watchEnd);
             if (overlap) {
-                ensureNewRangeHasNoOverlap(range);
+                removeOverlappingRanges(range);
             }
         }
         if (!overlap) {
@@ -96,7 +96,7 @@ public class MediaTracker {
         startedTime = -1;
     }
 
-    private void ensureNewRangeHasNoOverlap(Range input)
+    private void removeOverlappingRanges(Range input)
     {
         List<Range> toRemove = new ArrayList<>();
         for (int i = 0; i < rangesWatched.size(); i++) {

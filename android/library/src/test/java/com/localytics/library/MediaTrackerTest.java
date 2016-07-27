@@ -118,16 +118,16 @@ public class MediaTrackerTest {
             }
         });
 
-        //range 1
         mediaTracker.playAtTime(50000);
         mediaTracker.stopAtTime(150000);
-        //range 2
+
         mediaTracker.playAtTime(300000);
         mediaTracker.stopAtTime(500000);
-        //overlaps both ranges
+
         mediaTracker.playAtTime(600000);
         mediaTracker.stopAtTime(750000);
 
+        //overlaps all previous ranges
         mediaTracker.playAtTime(0);
         mediaTracker.stopAtTime(800000);
 
