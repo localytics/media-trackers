@@ -1,1 +1,2 @@
 #media-trackers
+This repo contains a sample code for how to track media engagement in both iOS and Android with Localytics SDK.  These examples demonstrate how to tag events that indicate video viewing progress in an end user's app.
