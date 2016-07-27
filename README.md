@@ -1,2 +1,2 @@
 #media-trackers
-This repo contains a Localytics sample for how to track media engagement in both iOS and Android. These plugins are intended to be integrated into an end user's app for the purpose of tagging events to indicate a user's activity.
+This repo contains a sample code for how to track media engagement in both iOS and Android with Localytics SDK.  These examples demonstrate how to tag events that indicate video viewing progress in an end user's app.
