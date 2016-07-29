@@ -1,5 +1,7 @@
 package com.localytics.library;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,20 +71,43 @@ public class MediaTracker {
 
     private void mergeOrCreateRange(int watchStart, int watchEnd) {
         if (watchStart < 0) {
-            throw new IllegalStateException("The video can't be tagged as stopped before it is tagged as started.");
+            Log.i("LocalyticsMediaTracker", "Media Tracker dropping stop datapoint.  A stop was " +
+                    "called before a start, this can occur when a start was never called or stop " +
+                    "was called multiple times in a row.");
+            return;
         }
-        if (watchEnd > videoDurationMS || watchStart > videoDurationMS) {
-            throw new IllegalArgumentException("The time input is greater than the duration of the media.");
+        if (watchEnd > videoDurationMS) {
+            Log.i("LocalyticsMediaTracker", "Media Tracker dropping stop datapoint.  A stop was " +
+                    "called with a time that is larger than the media duration.");
+            return;
         }
         boolean overlap = false;
         int i = 0;
         while (!overlap && i < rangesWatched.size()) {
-            overlap = rangesWatched.get(i++).mergeIfOverlapping(watchStart, watchEnd);
+            Range range = rangesWatched.get(i++);
+            overlap = range.mergeIfOverlapping(watchStart, watchEnd);
+            if (overlap) {
+                removeOverlappingRanges(range);
+            }
         }
         if (!overlap) {
             rangesWatched.add(new Range(watchStart, watchEnd));
         }
         startedTime = -1;
+    }
+
+    private void removeOverlappingRanges(Range input)
+    {
+        List<Range> toRemove = new ArrayList<>();
+        for (int i = 0; i < rangesWatched.size(); i++) {
+            Range range = rangesWatched.get(i);
+            if (range != input) { //avoid merging myself
+                if (input.mergeIfOverlapping(range.getStart(), range.getEnd())) {
+                    toRemove.add(range);
+                }
+            }
+        }
+        rangesWatched.removeAll(toRemove);
     }
 
     private void tagEvent() {
